@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎁 Amigo Secreto</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="app-header">
+    <h1>🎁 Amigo Secreto</h1>
+    <p>Organiza tu intercambio de regalos sin complicaciones</p>
+  </header>
+
+  <main id="app">
+
+    <!-- ============ VISTA: INICIO ============ -->
+    <section id="view-home" class="view">
+      <div class="cards">
+        <div class="card">
+          <h2>Crear una sala</h2>
+          <p>Define el nombre del grupo y el presupuesto de los regalos.</p>
+          <button id="btn-goto-create" class="btn btn-primary">Crear sala</button>
+        </div>
+
+        <div class="card">
+          <h2>Unirme a una sala</h2>
+          <p>Ingresa el código que te compartió el organizador.</p>
+          <input id="input-join-code" type="text" placeholder="Código de sala (ej: A1B2C3)" maxlength="6" />
+          <button id="btn-goto-join" class="btn btn-secondary">Unirme</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VISTA: CREAR SALA ============ -->
+    <section id="view-create" class="view hidden">
+      <h2>Crear nueva sala</h2>
+      <form id="form-create-room">
+        <label>Nombre del grupo
+          <input type="text" id="create-room-name" placeholder="Ej: Amigos de la oficina" required />
+        </label>
+        <label>Presupuesto sugerido
+          <input type="text" id="create-room-budget" placeholder="Ej: $50.000 COP" required />
+        </label>
+        <label>Tu nombre (organizador)
+          <input type="text" id="create-organizer-name" placeholder="Tu nombre" />
+        </label>
+        <label>Tu correo (organizador)
+          <input type="email" id="create-organizer-email" placeholder="tu@correo.com" />
+        </label>
+        <div class="form-actions">
+          <button type="button" class="btn btn-link" data-back="view-home">← Volver</button>
+          <button type="submit" class="btn btn-primary">Crear sala</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ VISTA: SALA CREADA (confirmación) ============ -->
+    <section id="view-created" class="view hidden">
+      <h2>¡Sala creada con éxito! 🎉</h2>
+      <p>Comparte este código con los participantes:</p>
+      <div class="code-box" id="created-room-code">------</div>
+
+      <p>Enlace directo para invitar:</p>
+      <div class="link-box">
+        <input type="text" id="created-room-link" readonly />
+        <button id="btn-copy-link" class="btn btn-secondary">Copiar</button>
+      </div>
+
+      <div class="warning-box">
+        <strong>⚠️ Guarda este enlace de organizador</strong>: solo tú debes tenerlo,
+        te permite ejecutar el sorteo.
+        <div class="link-box">
+          <input type="text" id="created-organizer-link" readonly />
+          <button id="btn-copy-organizer-link" class="btn btn-secondary">Copiar</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-go-to-room-from-create">Ir a la sala</button>
+    </section>
+
+    <!-- ============ VISTA: SALA (participantes + organizador) ============ -->
+    <section id="view-room" class="view hidden">
+      <h2 id="room-title">Sala</h2>
+      <p id="room-subtitle" class="muted"></p>
+
+      <div id="room-not-drawn">
+        <!-- Formulario de inscripción -->
+        <div class="card" id="register-card">
+          <h3>Inscribirme en esta sala</h3>
+          <form id="form-register">
+            <label>Tu nombre
+              <input type="text" id="register-name" required />
+            </label>
+            <label>Tu correo
+              <input type="email" id="register-email" required />
+            </label>
+            <label>Lista de deseos</label>
+            <div id="wishlist-inputs"></div>
+            <button type="button" id="btn-add-wish" class="btn btn-link">+ Agregar otro deseo</button>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Registrarme</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Editar mi lista de deseos (si ya estoy registrado) -->
+        <div class="card hidden" id="edit-wishlist-card">
+          <h3>Mi lista de deseos</h3>
+          <p class="muted">Puedes modificarla en cualquier momento antes del sorteo.</p>
+          <div id="edit-wishlist-inputs"></div>
+          <button type="button" id="btn-add-edit-wish" class="btn btn-link">+ Agregar otro deseo</button>
+          <div class="form-actions">
+            <button type="button" id="btn-save-wishlist" class="btn btn-primary">Guardar cambios</button>
+          </div>
+        </div>
+
+        <!-- Lista de participantes -->
+        <div class="card">
+          <h3>Participantes inscritos (<span id="participants-count">0</span>)</h3>
+          <ul id="participants-list"></ul>
+        </div>
+
+        <!-- Panel del organizador -->
+        <div class="card organizer-panel hidden" id="organizer-panel">
+          <h3>Panel del organizador</h3>
+          <p class="muted">Solo tú ves esta sección porque tienes el enlace de organizador.</p>
+          <button id="btn-draw" class="btn btn-danger">🎲 Ejecutar sorteo y enviar correos</button>
+          <div id="draw-results"></div>
+        </div>
+      </div>
+
+      <div id="room-drawn" class="hidden">
+        <div class="card">
+          <h3>✅ El sorteo ya se realizó</h3>
+          <p>Cada participante recibió un correo privado con el nombre y la lista de deseos
+             de la persona a la que le regala. ¡Feliz Amigo Secreto! 🎄</p>
+        </div>
+      </div>
+
+      <p id="room-error" class="error hidden"></p>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>Proyecto de evidencia — Amigo Secreto Full-Stack (Node.js + Express + Nodemailer)</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
